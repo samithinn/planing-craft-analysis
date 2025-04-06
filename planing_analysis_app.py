@@ -7,31 +7,41 @@ import io
 # Set the page configuration for a wide layout
 st.set_page_config(layout="wide")
 
-# Add logo with no space between the logo and title
+# Add logo and adjust spacing
 st.markdown("""
     <style>
         .block-container {
-            padding: 1rem;
+            padding: 1rem 2rem;
             max-width: 100%;
-            margin: 0;
+            margin: 0 auto;
+            text-align: center;
         }
+
         .css-1y4t6uw {
             font-size: 16px;
             padding: 15px 30px;
         }
+
         .css-18e3th9 {
             font-size: 16px;
         }
-        .stImage{
-            margin-bottom: -20px;
+
+        .stImage {
+            display: block;
+            margin: 0 auto;
+            padding-bottom: 0;
+        }
+
+        h1 {
+            margin-top: 0;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Add logo with no space between title
-st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=300)
+# Display the logo with no space
+st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=200)
 
-# Title
+# Title with no space between logo and title
 st.title("🚢 Planing Craft Resistance and Stability Analysis")
 
 # === Inputs (Departure Only) ===
