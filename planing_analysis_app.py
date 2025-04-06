@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import io
 
 st.set_page_config(layout="wide")
 st.markdown("""
@@ -211,9 +212,24 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
             ax_cl.legend()
             st.pyplot(fig_cl)
 
-            # Download CSV
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button(f"⬇️ Download {name} Results", csv, f"{name.lower()}_results.csv", "text/csv")
+           
+
+
+        # Convert DataFrame to Excel in memory
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Results')
+        writer.save()
+        processed_data = output.getvalue()
+
+        # Download Excel
+        st.download_button(
+        label=f"⬇️ Download {name} Results (Excel)",
+        data=processed_data,
+        file_name=f"{name.lower()}_results.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
 
     # Combined Tab
     with tabs[2]:
@@ -261,18 +277,28 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
                  bbox=dict(facecolor='lightgreen', alpha=0.5, edgecolor='black', boxstyle='round,pad=0.4'))
         st.pyplot(fig3)
 
-        # Combined CSV Download
-        combined_df = pd.concat([
-            df_dep.assign(Condition="Departure"),
-            df_arr.assign(Condition="Arrival")
-        ], ignore_index=True)
 
-        st.download_button(
-            label="⬇️ Download Combined Results (Departure + Arrival)",
-            data=combined_df.to_csv(index=False).encode('utf-8'),
-            file_name="combined_results.csv",
-            mime="text/csv"
-        )
+# Combined Excel Download
+combined_df = pd.concat([
+    df_dep.assign(Condition="Departure"),
+    df_arr.assign(Condition="Arrival")
+], ignore_index=True)
+
+# Write to Excel in memory
+output = io.BytesIO()
+with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+    combined_df.to_excel(writer, index=False, sheet_name='Combined_Results')
+    writer.save()
+    excel_data = output.getvalue()
+
+# Streamlit download button for Excel
+st.download_button(
+    label="⬇️ Download Combined Results (Departure + Arrival)",
+    data=excel_data,
+    file_name="combined_results.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
 
 # === Footer / Attribution ===
 st.markdown("---")
