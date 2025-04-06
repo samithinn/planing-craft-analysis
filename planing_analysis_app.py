@@ -4,36 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 
-# Set the page configuration for a wide layout
 st.set_page_config(layout="wide")
-
-# Add logo and adjust spacing
 st.markdown("""
     <style>
         .block-container {
-            padding: 1rem 2rem;
-            max-width: 100%;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .css-1y4t6uw {
-            font-size: 16px;
-            padding: 15px 30px;
-        }
-
-        .css-18e3th9 {
-            font-size: 16px;
-        }
-
-        .stImage {
-            display: block;
-            margin: 0 auto;
-            padding-bottom: 0;
-        }
-
-        h1 {
-            margin-top: 0;
+            padding: 2rem 5rem;
+            max-width: 1200px;
+            margin: auto;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -41,8 +18,9 @@ st.markdown("""
 # Display the logo with no space
 st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=200)
 
-# Title with no space between logo and title
+
 st.title("🚢 Planing Craft Resistance and Stability Analysis")
+
 
 # === Inputs (Departure Only) ===
 st.sidebar.header("🔧 Input: Departure Condition")
