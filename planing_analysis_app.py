@@ -18,7 +18,7 @@ st.markdown("""
 # Display the logo with no space
 st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=300)
 
-st.title("🚢 Planing Craft Resistance and Stability Analysis")
+st.title("🚢 Planing Craft Resistance and Porpoising Stability Analysis")
 
 # === Inputs (Departure Only) ===
 st.sidebar.header("🔧 Input: Departure Condition")
