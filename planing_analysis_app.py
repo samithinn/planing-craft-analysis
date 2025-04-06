@@ -146,7 +146,6 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df.to_excel(writer, index=False, sheet_name='Results')
-                writer.save()
             processed_data = output.getvalue()
 
             st.download_button(
@@ -206,7 +205,6 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             combined_df.to_excel(writer, index=False, sheet_name='Combined_Results')
-            writer.save()
         excel_data = output.getvalue()
 
         st.download_button(
