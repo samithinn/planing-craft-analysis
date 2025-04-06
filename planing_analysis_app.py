@@ -29,7 +29,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Add logo with no space between title
-st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=150)
+st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=300)
 
 # Title
 st.title("🚢 Planing Craft Resistance and Stability Analysis")
