@@ -15,8 +15,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Display the logo with no space
-st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=200)
+# Display the logo
+st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=300)
 
 
 st.title("🚢 Planing Craft Resistance and Stability Analysis")
