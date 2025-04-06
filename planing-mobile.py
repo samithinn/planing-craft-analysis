@@ -306,3 +306,28 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
             df_arr.to_excel(writer, index=False, sheet_name="Arrival Results")
         processed_data = output.getvalue()
         st.download_button("⬇️ Download Arrival Results (Excel)", data=processed_data, file_name="arrival_results.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
+
+# === Footer / Attribution ===
+st.markdown("---")
+st.markdown(
+    """
+    📘 *This application was created by **Samithin Kongkaew**, MSc Naval Architecture, Newcastle University.*  
+    🛠️ Developed as part of the module **MAR8178 Advanced Marine Propulsion Technology**  
+    🎓 Supervised by **Dr. David Trodden**  
+    📐 Calculations are based on **Savitsky's method (1964)**
+    """,
+    unsafe_allow_html=True
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    """
+    🛠️ *Developed by **Samithin Kongkaew***  
+    MSc Naval Architecture, Newcastle University
+    
+    🎓 MAR8178 — **Dr. David Trodden**  
+    📐 Based on **Savitsky's method**
+    """
+)
