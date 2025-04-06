@@ -20,7 +20,7 @@ st.title("🚢 Planing Craft Resistance and Porpoising Stability Analysis")
 # === Inputs (Departure Only) ===
 st.sidebar.header("🔧 Input: Departure Condition")
 nabla_departure = st.sidebar.number_input("Displacement Volume (∇) [m³]", value=40.0)
-LCG_departure = st.sidebar.number_input("LCG [m]", value=6.0)
+LCG_departure = st.sidebar.number_input("Longitudinal centre of gravity (LCG) [m]", value=6.0)
 Beam = st.sidebar.number_input("Beam (B) [m]", value=6.5)
 beta_deg = st.sidebar.slider("Deadrise (β) [deg]", 0, 20, 6)
 eta_t = st.sidebar.number_input("Transmission Efficiency (ηₜ)", value=0.95)
