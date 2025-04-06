@@ -24,7 +24,7 @@ LCG_departure = st.sidebar.number_input("Longitudinal Centre of Gravity (LCG) [m
 Beam = st.sidebar.number_input("Beam (B) [m]", value=6.5)
 beta_deg = st.sidebar.slider("Deadrise Angle (β) [deg]", 0, 20, 6)
 eta_t = st.sidebar.number_input("Transmission Efficiency (ηₜ)", value=0.95)
-eta_d = st.sidebar.number_input("Overall Propulsive Efficiency (η_d)", value=0.50)
+eta_d = st.sidebar.number_input("Overall Propulsive Efficiency (η_D)", value=0.50)
 
 # Speed input
 st.sidebar.header("📈 Speed Range")
