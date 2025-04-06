@@ -10,6 +10,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"  # Start with sidebar collapsed on mobile
 )
 
+# Display the logo with no space
+st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=200)
+
 # Custom CSS for a mobile-friendly experience
 st.markdown("""
     <style>
