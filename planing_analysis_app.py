@@ -15,7 +15,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🚢 Planing Craft Resistance \n and Porpoising Stability Analysis")
+st.title("🚢 Planing Craft Resistance and Stability Analysis")
 
 # === Inputs (Departure Only) ===
 st.sidebar.header("🔧 Input: Departure Condition")
