@@ -30,7 +30,7 @@ eta_d = st.sidebar.number_input("Propeller Efficiency (η_d)", value=0.50)
 st.sidebar.header("📈 Speed Range")
 speed_min = st.sidebar.number_input("Min Speed [knots]", value=10.0)
 speed_max = st.sidebar.number_input("Max Speed [knots]", value=52.0)
-speed_step = st.sidebar.number_input("Speed Step [knots]", value=1.0)
+speed_step = st.sidebar.number_input("Speed Increment [knots]", value=1.0)
 speeds_knots = np.arange(speed_min, speed_max + speed_step, speed_step)
 speeds_ms = speeds_knots * 1852 / 3600
 
