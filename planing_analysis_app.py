@@ -65,11 +65,11 @@ def porpoising_limit(beta_deg, C_L_beta):
     sqrt_cl = np.sqrt(cl_half)
     def limit_at(beta_val):
         if beta_val == 0:
-            return 78.502 * cl_half + 15.232 * sqrt_cl - 2.3669
+            return 78.5020773663644 * cl_half + 15.2324516501709 * sqrt_cl - 2.3669625252971
         elif beta_val == 10:
-            return 76.916 * cl_half + 8.8667 * sqrt_cl + 0.1276
+            return 76.9163597708453 * cl_half + 8.86671824625344 * sqrt_cl + 0.127627038392398
         elif beta_val == 20:
-            return 68.500 * cl_half + 12.662 * sqrt_cl + 0.5128
+            return 68.5001718987764 * cl_half + 12.6616006501741 * sqrt_cl + 0.51280018390836
     if beta_deg in [0, 10, 20]:
         return limit_at(beta_deg)
     elif 0 < beta_deg < 10:
@@ -138,91 +138,168 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
     df_arr = run_analysis(0.8 * nabla_departure, (2.5 / 3.0) * LCG_departure)
 
     tabs = st.tabs(["📦 Departure", "⚓ Arrival", "📊 Combined Plots"])
-    for df, name, tab in zip([df_dep, df_arr], ["Departure", "Arrival"], tabs[:2]):
-        with tab:
-            st.subheader(f"📊 {name} Results")
-            st.dataframe(df, use_container_width=True)
 
-            # Max speed info
-            max_idx = df['Speed [knots]'].idxmax()
-            st.markdown(f"### 📌 At Maximum Speed ({df['Speed [knots]'][max_idx]:.2f} knots):")
-            st.markdown(f"- Total Resistance = **{df['Total Resistance [kN]'][max_idx]:.2f} kN**")
-            st.markdown(f"- Brake Power = **{df['Brake Power [kW]'][max_idx]:.2f} kW**")
+    # Departure Tab
+    with tabs[0]:
+        st.subheader(f"📊 Departure Results")
+        st.dataframe(df_dep, use_container_width=True)
 
-            # Resistance Plot
-            st.subheader("📈 Total Resistance vs Speed")
-            fig_r, ax_r = plt.subplots()
-            ax_r.plot(df["Speed [knots]"], df["Total Resistance [kN]"], marker='o')
-            ax_r.set_xlabel("Speed [knots]")
-            ax_r.set_ylabel("Total Resistance [kN]")
-            ax_r.grid(True)
-            st.pyplot(fig_r)
+        # Max Speed Summary
+        max_idx = df_dep['Speed [knots]'].idxmax()
+        st.markdown(f"### 📌 At Maximum Speed ({df_dep['Speed [knots]'][max_idx]:.2f} knots):")
+        st.markdown(f"- Total Resistance = **{df_dep['Total Resistance [kN]'][max_idx]:.2f} kN**")
+        st.markdown(f"- Brake Power = **{df_dep['Brake Power [kW]'][max_idx]:.2f} kW**")
 
-            # Brake Power Plot
-            st.subheader("📈 Brake Power vs Speed")
-            fig_b, ax_b = plt.subplots()
-            ax_b.plot(df["Speed [knots]"], df["Brake Power [kW]"], marker='s', color='orange')
-            ax_b.set_xlabel("Speed [knots]")
-            ax_b.set_ylabel("Brake Power [kW]")
-            ax_b.grid(True)
-            st.pyplot(fig_b)
+        # Resistance Plot
+        st.subheader("📈 Total Resistance vs Speed")
+        fig_r, ax_r = plt.subplots()
+        ax_r.plot(df_dep["Speed [knots]"], df_dep["Total Resistance [kN]"], marker='o')
+        ax_r.set_xlabel("Speed [knots]")
+        ax_r.set_ylabel("Total Resistance [kN]")
+        ax_r.grid(True)
+        st.pyplot(fig_r)
 
-            # Critical Speed Estimation
-            critical_speed = None
-            for i in range(1, len(df)):
-                if df["Stability"].iloc[i - 1] == "Stable" and df["Stability"].iloc[i] == "Unstable":
-                    tau1, tau2 = df["Trim Angle [deg]"].iloc[i - 1], df["Trim Angle [deg]"].iloc[i]
-                    lim1, lim2 = df["Porpoising Limit [deg]"].iloc[i - 1], df["Porpoising Limit [deg]"].iloc[i]
-                    spd1, spd2 = df["Speed [knots]"].iloc[i - 1], df["Speed [knots]"].iloc[i]
-                    diff1 = tau1 - lim1
-                    diff2 = tau2 - lim2
-                    if diff1 != diff2:
-                        critical_speed = spd1 + (spd2 - spd1) * (-diff1) / (diff2 - diff1)
-                    break
-            if critical_speed:
-                st.markdown(f"🧭 **Estimated critical speed before instability: {critical_speed:.2f} knots**")
-            else:
-                st.markdown("✅ **No instability transition detected — stable throughout range.**")
+        # Brake Power Plot
+        st.subheader("📈 Brake Power vs Speed")
+        fig_b, ax_b = plt.subplots()
+        ax_b.plot(df_dep["Speed [knots]"], df_dep["Brake Power [kW]"], marker='s', color='orange')
+        ax_b.set_xlabel("Speed [knots]")
+        ax_b.set_ylabel("Brake Power [kW]")
+        ax_b.grid(True)
+        st.pyplot(fig_b)
 
-            # Trim vs Porpoising Limit
-            st.subheader("📈 Trim Angle vs Porpoising Limit (X = Speed)")
-            fig_t, ax_t = plt.subplots()
-            ax_t.plot(df["Speed [knots]"], df["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
-            for i in range(len(df)):
-                color = 'green' if df["Stability"].iloc[i] == "Stable" else 'red'
-                marker = 'o' if df["Stability"].iloc[i] == "Stable" else 'x'
-                ax_t.scatter(df["Speed [knots]"].iloc[i], df["Trim Angle [deg]"].iloc[i], color=color, marker=marker)
-            ax_t.set_xlabel("Speed [knots]")
-            ax_t.set_ylabel("Trim Angle [deg]")
-            ax_t.grid(True)
-            ax_t.legend()
-            st.pyplot(fig_t)
+        # Critical Speed Estimation
+        critical_speed = None
+        for i in range(1, len(df_dep)):
+            if df_dep["Stability"].iloc[i - 1] == "Stable" and df_dep["Stability"].iloc[i] == "Unstable":
+                tau1, tau2 = df_dep["Trim Angle [deg]"].iloc[i - 1], df_dep["Trim Angle [deg]"].iloc[i]
+                lim1, lim2 = df_dep["Porpoising Limit [deg]"].iloc[i - 1], df_dep["Porpoising Limit [deg]"].iloc[i]
+                spd1, spd2 = df_dep["Speed [knots]"].iloc[i - 1], df_dep["Speed [knots]"].iloc[i]
+                diff1 = tau1 - lim1
+                diff2 = tau2 - lim2
+                if diff1 != diff2:
+                    critical_speed = spd1 + (spd2 - spd1) * (-diff1) / (diff2 - diff1)
+                break
 
-            # Trim vs Porpoising Limit (X = √(C_L_beta / 2))
-            st.subheader("📈 Trim Angle vs Porpoising Limit (X = √(C_L_beta / 2))")
-            valid = df.dropna(subset=["√(C_L_beta / 2)", "Trim Angle [deg]", "Porpoising Limit [deg]"])
-            fig_cl, ax_cl = plt.subplots()
-            ax_cl.plot(valid["√(C_L_beta / 2)"], valid["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
-            for i in valid.index:
-                color = 'green' if valid["Stability"].loc[i] == "Stable" else 'red'
-                marker = 'o' if valid["Stability"].loc[i] == "Stable" else 'x'
-                ax_cl.scatter(valid["√(C_L_beta / 2)"].loc[i], valid["Trim Angle [deg]"].loc[i], color=color, marker=marker)
-            ax_cl.set_xlabel("√(C_L_beta / 2)")
-            ax_cl.set_ylabel("Trim Angle [deg]")
-            ax_cl.grid(True)
-            ax_cl.legend()
-            st.pyplot(fig_cl)
+        if critical_speed:
+            st.markdown(f"🧭 **Estimated critical speed before instability: {critical_speed:.2f} knots**")
+        else:
+            st.markdown("✅ **No instability transition detected — stable throughout range.**")
 
-        # Excel Download for individual condition
+        # Porpoising vs Speed Plot
+        st.subheader("📈 Porpoising Limit vs Speed")
+        fig_p1, ax_p1 = plt.subplots()
+        ax_p1.plot(df_dep["Speed [knots]"], df_dep["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
+        ax_p1.scatter(df_dep["Speed [knots]"], df_dep["Trim Angle [deg]"], label="Trim Angle", color='blue')
+        ax_p1.set_xlabel("Speed [knots]")
+        ax_p1.set_ylabel("Trim Angle [deg]")
+        ax_p1.legend()
+        ax_p1.grid(True)
+        st.pyplot(fig_p1)
+
+        # Porpoising vs √(C_L_beta / 2) Plot
+        st.subheader("📈 Porpoising Limit vs √(C_L_beta / 2)")
+        fig_p2, ax_p2 = plt.subplots()
+        ax_p2.plot(df_dep["√(C_L_beta / 2)"], df_dep["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
+        ax_p2.scatter(df_dep["√(C_L_beta / 2)"], df_dep["Trim Angle [deg]"], label="Trim Angle", color='blue')
+        ax_p2.set_xlabel("√(C_L_beta / 2)")
+        ax_p2.set_ylabel("Trim Angle [deg]")
+        ax_p2.legend()
+        ax_p2.grid(True)
+        st.pyplot(fig_p2)
+
+        # Download Departure Results
         output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False, sheet_name='Results')
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df_dep.to_excel(writer, index=False, sheet_name='Results')
         processed_data = output.getvalue()
 
         st.download_button(
-            label=f"⬇️ Download {name} Results (Excel)",
+            label="⬇️ Download Departure Result (Excel)",
             data=processed_data,
-            file_name=f"{name.lower()}_results.xlsx",
+            file_name="departure_results.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    # Arrival Tab (similar structure as departure tab)
+    with tabs[1]:
+        st.subheader(f"⚓ Arrival Results")
+        st.dataframe(df_arr, use_container_width=True)
+
+        # Max Speed Summary
+        max_idx = df_arr['Speed [knots]'].idxmax()
+        st.markdown(f"### 📌 At Maximum Speed ({df_arr['Speed [knots]'][max_idx]:.2f} knots):")
+        st.markdown(f"- Total Resistance = **{df_arr['Total Resistance [kN]'][max_idx]:.2f} kN**")
+        st.markdown(f"- Brake Power = **{df_arr['Brake Power [kW]'][max_idx]:.2f} kW**")
+
+        # Resistance Plot
+        st.subheader("📈 Total Resistance vs Speed")
+        fig_r, ax_r = plt.subplots()
+        ax_r.plot(df_arr["Speed [knots]"], df_arr["Total Resistance [kN]"], marker='o')
+        ax_r.set_xlabel("Speed [knots]")
+        ax_r.set_ylabel("Total Resistance [kN]")
+        ax_r.grid(True)
+        st.pyplot(fig_r)
+
+        # Brake Power Plot
+        st.subheader("📈 Brake Power vs Speed")
+        fig_b, ax_b = plt.subplots()
+        ax_b.plot(df_arr["Speed [knots]"], df_arr["Brake Power [kW]"], marker='s', color='orange')
+        ax_b.set_xlabel("Speed [knots]")
+        ax_b.set_ylabel("Brake Power [kW]")
+        ax_b.grid(True)
+        st.pyplot(fig_b)
+
+        # Critical Speed Estimation
+        critical_speed = None
+        for i in range(1, len(df_arr)):
+            if df_arr["Stability"].iloc[i - 1] == "Stable" and df_arr["Stability"].iloc[i] == "Unstable":
+                tau1, tau2 = df_arr["Trim Angle [deg]"].iloc[i - 1], df_arr["Trim Angle [deg]"].iloc[i]
+                lim1, lim2 = df_arr["Porpoising Limit [deg]"].iloc[i - 1], df_arr["Porpoising Limit [deg]"].iloc[i]
+                spd1, spd2 = df_arr["Speed [knots]"].iloc[i - 1], df_arr["Speed [knots]"].iloc[i]
+                diff1 = tau1 - lim1
+                diff2 = tau2 - lim2
+                if diff1 != diff2:
+                    critical_speed = spd1 + (spd2 - spd1) * (-diff1) / (diff2 - diff1)
+                break
+        if critical_speed:
+            st.markdown(f"🧭 **Estimated critical speed before instability: {critical_speed:.2f} knots**")
+        else:
+            st.markdown("✅ **No instability transition detected — stable throughout range.**")
+
+        # Porpoising vs Speed Plot
+        st.subheader("📈 Porpoising Limit vs Speed")
+        fig_p1, ax_p1 = plt.subplots()
+        ax_p1.plot(df_arr["Speed [knots]"], df_arr["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
+        ax_p1.scatter(df_arr["Speed [knots]"], df_arr["Trim Angle [deg]"], label="Trim Angle", color='blue')
+        ax_p1.set_xlabel("Speed [knots]")
+        ax_p1.set_ylabel("Trim Angle [deg]")
+        ax_p1.legend()
+        ax_p1.grid(True)
+        st.pyplot(fig_p1)
+
+        # Porpoising vs √(C_L_beta / 2) Plot
+        st.subheader("📈 Porpoising Limit vs √(C_L_beta / 2)")
+        fig_p2, ax_p2 = plt.subplots()
+        ax_p2.plot(df_arr["√(C_L_beta / 2)"], df_arr["Porpoising Limit [deg]"], linestyle='--', color='black', label="Limit")
+        ax_p2.scatter(df_arr["√(C_L_beta / 2)"], df_arr["Trim Angle [deg]"], label="Trim Angle", color='blue')
+        ax_p2.set_xlabel("√(C_L_beta / 2)")
+        ax_p2.set_ylabel("Trim Angle [deg]")
+        ax_p2.legend()
+        ax_p2.grid(True)
+        st.pyplot(fig_p2)
+
+
+        # Download Arrival Results
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df_arr.to_excel(writer, index=False, sheet_name='Results')
+        processed_data = output.getvalue()
+
+        st.download_button(
+            label="⬇️ Download Arrival Result (Excel)",
+            data=processed_data,
+            file_name="arrival_results.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
@@ -272,17 +349,41 @@ if st.button("Run Resistance & Stability Analysis for Both Conditions (Departure
                  bbox=dict(facecolor='lightgreen', alpha=0.5, edgecolor='black', boxstyle='round,pad=0.4'))
         st.pyplot(fig3)
 
-    # Combined Excel Download for both conditions
-    combined_df = pd.concat([df_dep.assign(Condition="Departure"), df_arr.assign(Condition="Arrival")], ignore_index=True)
+        # Download Combined Results
+        combined_df = pd.concat([df_dep.assign(Condition="Departure"), df_arr.assign(Condition="Arrival")], ignore_index=True)
 
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        combined_df.to_excel(writer, index=False, sheet_name='Combined_Results')
-    excel_data = output.getvalue()
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            combined_df.to_excel(writer, index=False, sheet_name='Combined_Results')
+        processed_data = output.getvalue()
 
-    st.download_button(
-        label="⬇️ Download Combined Results (Departure + Arrival)",
-        data=excel_data,
-        file_name="combined_results.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        st.download_button(
+            label="⬇️ Download Combined Results (Excel)",
+            data=processed_data,
+            file_name="combined_results.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+
+# === Footer / Attribution ===
+st.markdown("---")
+st.markdown(
+    """
+    📘 *This application was created by **Samithin Kongkaew**, MSc Naval Architecture, Newcastle University.*  
+    🛠️ Developed as part of the module **MAR8178 Advanced Marine Propulsion Technology**  
+    🎓 Supervised by **Dr. David Trodden**  
+    📐 Calculations are based on **Savitsky's method (1964)**
+    """,
+    unsafe_allow_html=True
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    """
+    🛠️ *Developed by **Samithin Kongkaew***  
+    MSc Naval Architecture, Newcastle University
+    
+    🎓 MAR8178 — **Dr. David Trodden**  
+    📐 Based on **Savitsky's method**
+    """
+)
