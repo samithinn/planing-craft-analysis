@@ -15,6 +15,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.image("https://1000logos.net/wp-content/uploads/2020/06/Newcastle-University-Logo.png", width=150)
 st.title("🚢 Planing Craft Resistance and Stability Analysis")
 
 # === Inputs (Departure Only) ===
